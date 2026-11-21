@@ -1,0 +1,38 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "greeting" : {
+      "comment" : "Welcome message on the home screen",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Hello" }
+        },
+        "de" : {
+          "stringUnit" : { "state" : "translated", "value" : "Hallo" }
+        }
+      }
+    },
+    "houses" : {
+      "comment" : "Pluralized house count",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : { "stringUnit" : { "state" : "translated", "value" : "%lld house" } },
+              "other" : { "stringUnit" : { "state" : "translated", "value" : "%lld houses" } }
+            }
+          }
+        },
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : { "stringUnit" : { "state" : "translated", "value" : "%lld Haus" } },
+              "other" : { "stringUnit" : { "state" : "translated", "value" : "%lld Häuser" } }
+            }
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
