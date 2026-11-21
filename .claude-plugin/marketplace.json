@@ -1,0 +1,14 @@
+{
+  "name": "xcstool",
+  "owner": { "name": "Rui Nelson" },
+  "description": "xcstool: Xcode String Catalog tool and skill for LLM agents",
+  "plugins": [
+    {
+      "name": "xcstool",
+      "source": "./",
+      "description": "Split Xcode String Catalogs (.xcstrings) per language, translate them with LLM agents without filling their context, merge them back and check the work left.",
+      "category": "development",
+      "tags": ["xcode", "localization"]
+    }
+  ]
+}

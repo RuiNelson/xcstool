@@ -1,0 +1,15 @@
+#!/bin/sh
+# Run xcstool from this checkout without installing it. The Claude Code plugin puts
+# this bin/ directory on the PATH; it also works from a clone or a git submodule,
+# and through a symlink (for example ~/.local/bin/xcstool -> this file).
+set -e
+script="$0"
+while [ -L "$script" ]; do
+    target="$(readlink "$script")"
+    case "$target" in
+        /*) script="$target" ;;
+        *) script="$(dirname "$script")/$target" ;;
+    esac
+done
+root="$(cd "$(dirname "$script")/.." && pwd)"
+PYTHONPATH="$root/src${PYTHONPATH:+:$PYTHONPATH}" exec python3 -m xcstool "$@"

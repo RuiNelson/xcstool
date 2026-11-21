@@ -1,0 +1,9 @@
+{
+  "name": "xcstool",
+  "description": "Split Xcode String Catalogs (.xcstrings) per language, translate them with LLM agents without filling their context, merge them back and check the work left.",
+  "author": { "name": "Rui Nelson" },
+  "homepage": "https://github.com/RuiNelson/xcstool",
+  "repository": "https://github.com/RuiNelson/xcstool",
+  "license": "BSD-2-Clause",
+  "keywords": ["xcode", "xcstrings", "string-catalog", "localization", "translation", "ios", "macos"]
+}

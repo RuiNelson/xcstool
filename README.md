@@ -2,19 +2,72 @@
 
 Split Xcode String Catalogs (`.xcstrings`) into one file per language and merge them back, so localization work can be divided among several people or LLM agents working at the same time. Also checks how much localization work is left and removes stale keys.
 
-Pure Python (3.9+, the `/usr/bin/python3` that ships with Xcode), standard library only, BSD-2-Clause.
+Pure Python (3.9+, the `/usr/bin/python3` that ships with Xcode Command Line Tools), standard library only, BSD-2-Clause.
 
 ## Installation
 
-```bash
-pip install .
+### Claude Code plugin
+
+In a [Claude Code](https://claude.com/claude-code) session:
+
+```text
+/plugin marketplace add RuiNelson/xcstool
+/plugin install xcstool@xcstool
 ```
+
+This gives the agent the `xcstool` command and a skill that teaches it the whole workflow, with nothing else to install. See [Skill for LLM agents](#skill-for-llm-agents) for sharing it with a team and for other agents.
+
+### Command line
+
+With [uv](https://docs.astral.sh/uv/), straight from GitHub:
+
+```bash
+uv tool install git+https://github.com/RuiNelson/xcstool
+```
+
+Or from a clone, at the repository root:
+
+```bash
+uv tool install .
+```
+
+This puts an `xcstool` executable in uv's tool directory (`~/.local/bin` by default); run `uv tool update-shell` if it is not on your `PATH`.
 
 Or run it without installing, from a clone:
 
 ```bash
-PYTHONPATH=src /usr/bin/python3 -m xcstool --help
+PYTHONPATH=src python3 -m xcstool --help
 ```
+
+The `bin/xcstool` wrapper does the same from any directory, and can be symlinked into a directory on your `PATH`:
+
+```bash
+ln -s "$PWD/bin/xcstool" ~/.local/bin/xcstool
+```
+
+### As a git submodule
+
+To keep the tool inside an app's repository, for example in `bin/xcstool`, without installing anything:
+
+```bash
+git submodule add https://github.com/RuiNelson/xcstool bin/xcstool
+```
+
+Then run it from the repository root with `src` on `PYTHONPATH`:
+
+```bash
+PYTHONPATH=bin/xcstool/src python3 -m xcstool split MyApp/Localizable.xcstrings l10n/
+```
+
+```bash
+PYTHONPATH=bin/xcstool/src python3 -m xcstool merge l10n/ MyApp/Localizable.xcstrings
+```
+
+```bash
+PYTHONPATH=bin/xcstool/src python3 -m xcstool checkup MyApp/Localizable.xcstrings
+```
+
+After cloning the app's repository, fetch the submodule with `git submodule update --init`.
 
 ## Usage
 
@@ -126,6 +179,47 @@ Removes, in place, the keys whose `extractionState` is `stale`, with all their l
 | 10 | No split files found in the directory |
 | 11 | Split files of several catalogs in one directory |
 | 12 | Source languages do not match |
+
+## Skill for LLM agents
+
+[`skills/xcstool/SKILL.md`](skills/xcstool/SKILL.md) is an [Agent Skill](https://agentskills.io) that teaches coding agents (Claude Code and others that support the format) the split → translate → merge → checkup workflow (including adding a language by translating one string and splitting again) and how to edit split files: states, CLDR plural categories, device variations, substitutions and format specifiers. It also keeps their context window small: one language per agent, never reading a whole catalog, and only the keys still to translate, read and written in compact batches with the bundled [`scripts/l10n_slice.py`](skills/xcstool/scripts/l10n_slice.py).
+
+### Claude Code plugin
+
+This repository is also a Claude Code plugin and its own marketplace. In a Claude Code session:
+
+```text
+/plugin marketplace add RuiNelson/xcstool
+/plugin install xcstool@xcstool
+```
+
+The plugin brings the skill (it loads by itself when you work on `.xcstrings` files, or run it with `/xcstool:xcstool`) and puts an `xcstool` command on the agent's `PATH`, so nothing else needs to be installed.
+
+To share it with everyone working on an app, run these in the app's repository; they record the marketplace and the plugin in its `.claude/settings.json`, to be committed (each collaborator still runs the `install` once):
+
+```bash
+claude plugin marketplace add RuiNelson/xcstool --scope project
+```
+
+```bash
+claude plugin install xcstool@xcstool --scope project
+```
+
+Updates from third-party marketplaces are not automatic by default: turn them on in `/plugin` → Marketplaces, or run `/plugin marketplace update xcstool` and then update the plugin from `/plugin` → Installed.
+
+### Skill only
+
+For other agents, or without the plugin, link the skill into your personal skills directory (for Claude Code, `~/.claude/skills/`):
+
+```bash
+ln -s "$PWD/skills/xcstool" ~/.claude/skills/xcstool
+```
+
+Or, with the tool as a submodule in `bin/xcstool`, link it into the app's repository so everyone working on it gets it:
+
+```bash
+mkdir -p .claude/skills && ln -s ../../bin/xcstool/skills/xcstool .claude/skills/xcstool
+```
 
 ## Development
 
