@@ -15,31 +15,39 @@ In a [Claude Code](https://claude.com/claude-code) session:
 /plugin install xcstool@xcstool
 ```
 
-This gives the agent the `xcstool` command and a skill that teaches it the whole workflow, with nothing else to install. See [Skill for LLM agents](#skill-for-llm-agents) for sharing it with a team and for other agents.
+This repository is its own plugin marketplace. The plugin puts an `xcstool` command on the agent's `PATH` and brings a skill that teaches it the whole workflow, with nothing else to install. See [Skill for LLM agents](#skill-for-llm-agents) for sharing it with a team and for other agents.
 
 ### Command line
 
-With [uv](https://docs.astral.sh/uv/), straight from GitHub:
+Install it with [uv](https://docs.astral.sh/uv/), straight from GitHub:
 
 ```bash
 uv tool install git+https://github.com/RuiNelson/xcstool
 ```
 
-Or from a clone, at the repository root:
+Or from a clone of this repository, at its root:
 
 ```bash
 uv tool install .
 ```
 
-This puts an `xcstool` executable in uv's tool directory (`~/.local/bin` by default); run `uv tool update-shell` if it is not on your `PATH`.
+This puts an `xcstool` executable in uv's tool directory (`~/.local/bin` by default); run `uv tool update-shell` if it is not on your `PATH`. Without uv, run `pip install .` at the root of a clone instead (not `pip install -e .`, which the pip shipped with `/usr/bin/python3` does not support for this project).
 
-Or run it without installing, from a clone:
+### Without installing
+
+With uv, fetch and run it in one go, leaving nothing on your `PATH`:
+
+```bash
+uvx --from git+https://github.com/RuiNelson/xcstool xcstool --help
+```
+
+From a clone of this repository, at its root:
 
 ```bash
 PYTHONPATH=src python3 -m xcstool --help
 ```
 
-The `bin/xcstool` wrapper does the same from any directory, and can be symlinked into a directory on your `PATH`:
+From any other directory, run the clone's `bin/xcstool` wrapper, which sets `PYTHONPATH` itself. It can also be symlinked into a directory on your `PATH`:
 
 ```bash
 ln -s "$PWD/bin/xcstool" ~/.local/bin/xcstool
@@ -47,24 +55,24 @@ ln -s "$PWD/bin/xcstool" ~/.local/bin/xcstool
 
 ### As a git submodule
 
-To keep the tool inside an app's repository, for example in `bin/xcstool`, without installing anything:
+To keep the tool inside an app's repository, for example in `tools/xcstool`, without installing anything:
 
 ```bash
-git submodule add https://github.com/RuiNelson/xcstool bin/xcstool
+git submodule add https://github.com/RuiNelson/xcstool tools/xcstool
 ```
 
-Then run it from the repository root with `src` on `PYTHONPATH`:
+Then run it through the submodule's `tools/xcstool` wrapper, here from the app's repository root:
 
 ```bash
-PYTHONPATH=bin/xcstool/src python3 -m xcstool split MyApp/Localizable.xcstrings l10n/
-```
-
-```bash
-PYTHONPATH=bin/xcstool/src python3 -m xcstool merge l10n/ MyApp/Localizable.xcstrings
+tools/xcstool/bin/xcstool split MyApp/Localizable.xcstrings l10n/
 ```
 
 ```bash
-PYTHONPATH=bin/xcstool/src python3 -m xcstool checkup MyApp/Localizable.xcstrings
+tools/xcstool/bin/xcstool merge l10n/ MyApp/Localizable.xcstrings
+```
+
+```bash
+tools/xcstool/bin/xcstool checkup MyApp/Localizable.xcstrings
 ```
 
 After cloning the app's repository, fetch the submodule with `git submodule update --init`.
@@ -186,16 +194,9 @@ Removes, in place, the keys whose `extractionState` is `stale`, with all their l
 
 ### Claude Code plugin
 
-This repository is also a Claude Code plugin and its own marketplace. In a Claude Code session:
+With the plugin installed (see [Installation](#claude-code-plugin)), the skill loads by itself when you work on `.xcstrings` files, or run it with `/xcstool:xcstool`.
 
-```text
-/plugin marketplace add RuiNelson/xcstool
-/plugin install xcstool@xcstool
-```
-
-The plugin brings the skill (it loads by itself when you work on `.xcstrings` files, or run it with `/xcstool:xcstool`) and puts an `xcstool` command on the agent's `PATH`, so nothing else needs to be installed.
-
-To share it with everyone working on an app, run these in the app's repository; they record the marketplace and the plugin in its `.claude/settings.json`, to be committed (each collaborator still runs the `install` once):
+To share it with everyone working on an app, run these in the app's repository; they record the marketplace and the plugin in its `.claude/settings.json`, to be committed. Claude Code then offers to install them to each collaborator who trusts the repository folder:
 
 ```bash
 claude plugin marketplace add RuiNelson/xcstool --scope project
