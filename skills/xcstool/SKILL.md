@@ -25,7 +25,7 @@ A catalog holds every language: reading it puts each string's translations in al
 Use the first form that works:
 
 1. `xcstool …` if it is on the `PATH` (check with `xcstool --version`). The Claude Code plugin puts it there while it is enabled.
-2. From a clone or a git submodule (for example `bin/xcstool`): `bin/xcstool/bin/xcstool …`, or `PYTHONPATH=bin/xcstool/src python3 -m xcstool …`
+2. From a clone or a git submodule (for example `tools/xcstool`): `tools/xcstool/bin/xcstool …`, or `PYTHONPATH=tools/xcstool/src python3 -m xcstool …`
 3. Without installing, with uv: `uvx --from git+https://github.com/RuiNelson/xcstool xcstool …`
 
 If it fails to run, it might be because it needs (only) Python 3.9+ and the standard library. The examples below write `xcstool` for whichever form applies.

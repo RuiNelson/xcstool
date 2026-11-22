@@ -61,7 +61,7 @@ To keep the tool inside an app's repository, for example in `tools/xcstool`, wit
 git submodule add https://github.com/RuiNelson/xcstool tools/xcstool
 ```
 
-Then run it through the submodule's `tools/xcstool` wrapper, here from the app's repository root:
+Then run it through the submodule's `bin/xcstool` wrapper, here from the app's repository root:
 
 ```bash
 tools/xcstool/bin/xcstool split MyApp/Localizable.xcstrings l10n/
@@ -216,10 +216,10 @@ For other agents, or without the plugin, link the skill into your personal skill
 ln -s "$PWD/skills/xcstool" ~/.claude/skills/xcstool
 ```
 
-Or, with the tool as a submodule in `bin/xcstool`, link it into the app's repository so everyone working on it gets it:
+Or, with the tool as a submodule in `tools/xcstool`, link it into the app's repository so everyone working on it gets it:
 
 ```bash
-mkdir -p .claude/skills && ln -s ../../bin/xcstool/skills/xcstool .claude/skills/xcstool
+mkdir -p .claude/skills && ln -s ../../tools/xcstool/skills/xcstool .claude/skills/xcstool
 ```
 
 ## Development
